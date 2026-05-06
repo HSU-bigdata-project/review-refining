@@ -1,0 +1,12 @@
+jupyter
+ipykernel
+pandas
+numpy
+matplotlib
+scikit-learn
+torch
+transformers
+tqdm
+emoji
+soynlp
+openpyxl

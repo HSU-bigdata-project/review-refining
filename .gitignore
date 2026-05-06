@@ -36,6 +36,7 @@ wandb/
 *.safetensors
 
 # Generated data artifacts
+*.csv
 preprocessed_reviews.csv
 final_hybrid_data.csv
 final_hybrid_train.csv
@@ -43,5 +44,6 @@ final_hybrid_val.csv
 final_hybrid_test.csv
 reviews_embeddings*.csv
 
-# Logs
+# Logs and custom directory
 *.log
+custom

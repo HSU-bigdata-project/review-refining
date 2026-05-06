@@ -28,5 +28,39 @@
 원본 리뷰 데이터는 `reviews/` 디렉터리에 있습니다.
 전처리 결과, 임베딩 CSV, 학습/검증/테스트 분할 파일은 노트북 실행 과정에서 생성되는 산출물입니다.
 
+## 환경 설정
+
+Windows와 macOS 모두 아래 패키지를 설치하면 프로젝트 노트북을 실행할 수 있습니다.
+
+### uv 사용
+
+```bash
+uv pip install -r requirements.txt
+```
+
+### pip 사용
+
+```bash
+pip install -r requirements.txt
+```
+
+### 직접 설치
+
+```bash
+pip install jupyter ipykernel pandas numpy matplotlib scikit-learn torch transformers tqdm emoji soynlp openpyxl
+```
+
+주요 패키지 역할은 다음과 같습니다.
+
+- `jupyter`, `ipykernel`: 노트북 실행
+- `pandas`, `numpy`: 데이터 처리
+- `openpyxl`: 엑셀 리뷰 데이터 읽기
+- `emoji`, `soynlp`: 리뷰 텍스트 정제
+- `torch`: KcBERT 실행 및 MLP 모델 학습
+- `transformers`: KcBERT tokenizer/model 로드
+- `scikit-learn`: PCA, 데이터 분할, 스케일링, 평가 지표
+- `matplotlib`: 시각화
+- `tqdm`: 진행률 표시
+
 ## Git 관리
 `.gitignore`에는 캐시, 가상환경, 모델 체크포인트, 대용량 생성 산출물을 제외하도록 설정되어 있습니다.
