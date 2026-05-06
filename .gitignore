@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local environments
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# Local caches
+.cache/
+
+# Model outputs and checkpoints
+artifacts/
+models/
+checkpoints/
+runs/
+wandb/
+*.ckpt
+*.pt
+*.pth
+*.h5
+*.keras
+*.safetensors
+
+# Generated data artifacts
+preprocessed_reviews.csv
+final_hybrid_data.csv
+final_hybrid_train.csv
+final_hybrid_val.csv
+final_hybrid_test.csv
+reviews_embeddings*.csv
+
+# Logs
+*.log
