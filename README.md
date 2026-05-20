@@ -1,66 +1,117 @@
 # 한성대학교 빅데이터 프로그래밍 프로젝트
 
-배달의민족 리뷰 데이터를 전처리하고, KcBERT 기반 임베딩과 PCA feature fusion을 거쳐 MLP 모델로 감성/리뷰 분류 실험을 진행하는 프로젝트입니다.
+배달의민족 리뷰 데이터에서 리뷰 이벤트 참여 여부를 판별하고, 모델 예측 확률을 활용해 별점을 정제하는 것을 목표로 하는 프로젝트입니다.
+
+## 로드맵
+
+```text
+1. 데이터 수집 및 라벨링
+   - 배달의민족 리뷰 엑셀 데이터 통합
+   - MENU 컬럼의 리뷰 이벤트 관련 표현을 기준으로 이벤트 리뷰 label 생성
+
+2. 데이터 전처리
+   - 리뷰 원문 정리
+   - KcBERT 입력용 cleaned_review_text 생성
+   - rating, text_length, emoji_count, photo_count 등 메타데이터 생성
+
+3. KcBERT 특징 추출
+   - beomi/kcbert-base를 특징 추출기로 사용
+   - 리뷰 텍스트별 768차원 CLS 임베딩 생성
+
+4. PCA 차원 축소 및 Feature Fusion
+   - train 데이터 기준으로 PCA fit
+   - 누적 설명 분산 90% 수준으로 임베딩 차원 축소
+   - 정규화한 메타데이터와 PCA 임베딩 결합
+   - train / validation / test를 70% / 15% / 15%로 분할
+
+5. 5-Fold 교차 검증 및 SMOTE
+   - train 데이터 안에서 5-Fold 구성
+   - 각 fold의 학습 데이터에만 SMOTE 적용
+   - 검증 fold, validation, test에는 SMOTE 미적용
+
+6. 모델 학습 및 평가
+   - 베이스라인: TF-IDF + Random Forest 등
+   - 비교 실험: 메타데이터 only, KcBERT only, hybrid feature
+   - 제안 모델: Scikit-learn MLP Classifier
+   - 주요 지표: F1-Score, PR-AUC
+
+7. 별점 정제
+   - 모델이 예측한 이벤트 리뷰 확률을 기반으로 별점 가중 평균 산출
+```
 
 ## 프로젝트 구조
 
 ```text
 .
-├── 01data-process.ipynb          # 리뷰 데이터 정제 및 전처리
-├── 02KcBERT_extract.ipynb        # KcBERT 임베딩 추출
-├── 03PCA_Feature Fusion.ipynb    # PCA 기반 feature fusion
-├── 04MLP.ipynb                   # MLP 모델 학습 및 평가
-├── KcBERT_extract-original.ipynb # KcBERT 임베딩 추출 원본 노트북
-├── MLP_balanced.ipynb            # balanced data 기반 MLP 실험
-├── reviews/                      # 원본 리뷰 엑셀 데이터
-└── 7_빅데이터프로그래밍_수행계획서_오남.pdf # 기존 수행 계획서
+├── 01data-process.ipynb            # 원본 엑셀 통합, 라벨링, 텍스트/메타데이터 전처리
+├── 02KcBERT_extract.ipynb          # KcBERT CLS 임베딩 추출
+├── 03PCA_Feature Fusion.ipynb      # PCA 차원 축소, 메타데이터 정규화, feature fusion
+├── 04SMOTE_5Fold.ipynb             # 5-Fold 분할 및 fold별 train SMOTE 적용 준비
+├── custom/
+│   └── run_train_mlp_runpod.ipynb  # 외부 GPU/RunPod 실험용 노트북
+├── csv/
+│   ├── preprocessed_reviews.csv
+│   ├── reviews_embeddings_extract.csv
+│   ├── final_hybrid_train.csv
+│   ├── final_hybrid_val.csv
+│   └── final_hybrid_test.csv
+├── reviews/                        # 원본 리뷰 엑셀 데이터
+├── requirements.txt
+├── 7_빅데이터프로그래밍_수행계획서_오남.pdf
+└── 7분반_중간발표_오남.pdf
 ```
 
 ## 실행 순서
 
-1. `01data-process.ipynb`에서 원본 리뷰 데이터를 정제합니다.
-2. `02KcBERT_extract.ipynb`에서 리뷰 텍스트 임베딩을 추출합니다.
-3. `03PCA_Feature Fusion.ipynb`에서 PCA 기반 feature를 결합합니다.
-4. `04MLP.ipynb` 또는 `MLP_balanced.ipynb`에서 모델을 학습하고 성능을 확인합니다.
+노트북은 아래 순서대로 실행합니다.
 
-## 데이터
+```text
+01data-process.ipynb
+-> 02KcBERT_extract.ipynb
+-> 03PCA_Feature Fusion.ipynb
+-> 04SMOTE_5Fold.ipynb
+```
 
-원본 리뷰 데이터는 `reviews/` 디렉터리에 있습니다.
-전처리 결과, 임베딩 CSV, 학습/검증/테스트 분할 파일은 노트북 실행 과정에서 생성되는 산출물입니다.
+산출물 흐름은 다음과 같습니다.
+
+```text
+reviews/*.xlsx
+-> csv/preprocessed_reviews.csv
+-> csv/reviews_embeddings_extract.csv
+-> csv/final_hybrid_train.csv
+-> csv/final_hybrid_val.csv
+-> csv/final_hybrid_test.csv
+```
+
+`04SMOTE_5Fold.ipynb`는 베이스라인 모델 설정 전 단계까지만 포함합니다. 5-Fold로 나눈 각 학습 fold에만 SMOTE를 적용하고, 결과는 노트북 메모리의 `fold_datasets` 변수에 저장됩니다.
 
 ## 환경 설정
 
-Windows와 macOS 모두 아래 패키지를 설치하면 프로젝트 노트북을 실행할 수 있습니다.
+Python 3.10 이상 사용을 권장합니다. `02KcBERT_extract.ipynb`는 Hugging Face에서 KcBERT 모델을 내려받기 때문에 최초 실행 시 인터넷 연결이 필요합니다. 필요한 패키지는 `requirements.txt`에 정리되어 있습니다.
 
-### uv 사용
-
-```bash
-uv pip install -r requirements.txt
-```
-
-### pip 사용
+### macOS: uv 사용
 
 ```bash
-pip install -r requirements.txt
+cd /Users/hyunseop/Developer/uni/big-data
+uv python install 3.11
+uv add -r project/requirements.txt
+uv run jupyter lab project
 ```
 
-### 직접 설치
+### Windows: pip 사용
+
+Git Bash 또는 Bash 터미널 기준입니다.
 
 ```bash
-pip install jupyter ipykernel pandas numpy matplotlib scikit-learn torch transformers tqdm emoji soynlp openpyxl
+cd path/to/big-data/project
+python -m pip install -r requirements.txt
+jupyter lab
 ```
 
-주요 패키지 역할은 다음과 같습니다.
+노트북 셀에서 아래 명령으로 현재 커널에 패키지를 설치할 수 있습니다.
 
-- `jupyter`, `ipykernel`: 노트북 실행
-- `pandas`, `numpy`: 데이터 처리
-- `openpyxl`: 엑셀 리뷰 데이터 읽기
-- `emoji`, `soynlp`: 리뷰 텍스트 정제
-- `torch`: KcBERT 실행 및 MLP 모델 학습
-- `transformers`: KcBERT tokenizer/model 로드
-- `scikit-learn`: PCA, 데이터 분할, 스케일링, 평가 지표
-- `matplotlib`: 시각화
-- `tqdm`: 진행률 표시
+```python
+%pip install -r requirements.txt
+```
 
-## Git 관리
-`.gitignore`에는 캐시, 가상환경, 모델 체크포인트, 대용량 생성 산출물을 제외하도록 설정되어 있습니다.
+설치 후에는 커널을 재시작해야 새 패키지가 반영됩니다.
