@@ -1,0 +1,10 @@
+{
+  "selected_model": "mlp_32",
+  "hidden_layer_sizes": [
+    32
+  ],
+  "alpha": 0.0001,
+  "selection_rule": "highest mean_f1, then mean_pr_auc on 5-fold CV",
+  "min_threshold_for_tuning": 0.5,
+  "best_threshold_from_validation": 0.5074341029238064
+}

@@ -1,0 +1,66 @@
+{
+  "selected_config": {
+    "selected_model": "mlp_32",
+    "hidden_layer_sizes": [
+      32
+    ],
+    "alpha": 0.0001,
+    "selection_rule": "highest mean_f1, then mean_pr_auc on 5-fold CV",
+    "min_threshold_for_tuning": 0.5,
+    "best_threshold_from_validation": 0.5074341029238064
+  },
+  "metrics": [
+    {
+      "split": "validation_default_0_5",
+      "threshold": 0.5,
+      "f1": 0.42565597667638483,
+      "pr_auc": 0.3951505707524238,
+      "precision": 0.39317773788150806,
+      "recall": 0.4639830508474576,
+      "roc_auc": 0.5538567260747033,
+      "tn": 516,
+      "fp": 338,
+      "fn": 253,
+      "tp": 219
+    },
+    {
+      "split": "validation_tuned_min_0_5",
+      "threshold": 0.5074341029238064,
+      "f1": 0.426197458455523,
+      "pr_auc": 0.3951505707524238,
+      "precision": 0.3956442831215971,
+      "recall": 0.461864406779661,
+      "roc_auc": 0.5538567260747033,
+      "tn": 521,
+      "fp": 333,
+      "fn": 254,
+      "tp": 218
+    },
+    {
+      "split": "test_default_0_5",
+      "threshold": 0.5,
+      "f1": 0.42897460018814676,
+      "pr_auc": 0.38084224939889344,
+      "precision": 0.3864406779661017,
+      "recall": 0.4820295983086681,
+      "roc_auc": 0.5374440167646088,
+      "tn": 491,
+      "fp": 362,
+      "fn": 245,
+      "tp": 228
+    },
+    {
+      "split": "test_tuned_min_0_5",
+      "threshold": 0.5074341029238064,
+      "f1": 0.42735042735042733,
+      "pr_auc": 0.38084224939889344,
+      "precision": 0.3879310344827586,
+      "recall": 0.47568710359408034,
+      "roc_auc": 0.5374440167646088,
+      "tn": 498,
+      "fp": 355,
+      "fn": 248,
+      "tp": 225
+    }
+  ]
+}

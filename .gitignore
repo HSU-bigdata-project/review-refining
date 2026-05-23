@@ -34,6 +34,7 @@ wandb/
 *.h5
 *.keras
 *.safetensors
+*.joblib
 
 # Generated data artifacts
 *.csv
