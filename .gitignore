@@ -38,6 +38,8 @@ wandb/
 
 # Generated data artifacts
 *.csv
+outputs/*.json
+outputs/pdf_text/
 
 # Logs and custom directory
 *.log
