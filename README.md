@@ -12,7 +12,9 @@
 2. 데이터 전처리
    - 리뷰 원문 정리
    - KcBERT 입력용 cleaned_review_text 생성
-   - rating, text_length, emoji_count, photo_count 등 분석용 컬럼 생성
+   - rating은 별점 정제 대상 값으로 보존
+   - text_length, emoji_count, photo_count 메타데이터 생성
+   - has_photo는 생성하지 않고, rating은 이벤트 판별 입력 feature에서 제외
    - DATE, OWNER_REPLY, created_at 등 미사용 원본 컬럼 제외
 
 3. KcBERT 특징 추출
@@ -39,24 +41,24 @@
    - 주요 지표: F1-Score, PR-AUC
 
 7. 별점 정제
-   - 선택 모델과 제안 모델의 이벤트 리뷰 확률을 함께 비교
-   - 후보 1: 이벤트 리뷰로 예측된 리뷰 제외 후 가게별 별점 평균
-   - 후보 2: 이벤트 확률 기반 가중 평균
+   - 제안 모델과 validation 기준 선택 모델의 이벤트 리뷰 확률을 비교
+   - 중간 발표에서 채택한 후보 2: 이벤트 확률 기반 가중 평균만 적용
+   - 후보 1 제외 방식은 정보 손실 위험이 있어 최종 코드에서는 사용하지 않음
 ```
 
 ## 프로젝트 구조
 
 ```text
 .
-├── 01data-process.ipynb            # 원본 엑셀 통합, 라벨링, 텍스트/메타데이터 전처리
+├── 01data_process.ipynb            # 원본 엑셀 통합, 라벨링, 텍스트/메타데이터 전처리
 ├── 02KcBERT_extract.ipynb          # KcBERT CLS 임베딩 추출
-├── 03PCA_Feature Fusion.ipynb      # PCA 차원 축소, 메타데이터 정규화, feature fusion 확인
+├── 03PCA_Feature_Fusion.ipynb      # PCA 차원 축소, 메타데이터 정규화, feature fusion 확인
 ├── 04SMOTE_5-fold_model_train.ipynb # 5-Fold CV, SMOTE, MLP grid 탐색
-├── 05_baseline_compare_metadata_effect.ipynb # baseline 및 ablation 비교
-├── 06_model_selection_error_analysis.ipynb   # validation 기준 모델 선택 및 오답 분석
-├── 07_rating_refinement_comparison.ipynb     # test 리뷰 예측과 별점 정제 비교
+├── 05baseline_compare_metadata_effect.ipynb # baseline 및 ablation 비교
+├── 06model_selection_error_analysis.ipynb   # validation 기준 모델 선택 및 오답 분석
+├── 07rating_refinement_comparison.ipynb     # 후보 2 기반 별점 정제 비교
 ├── custom/
-│   └── codex-reviewv1.md           # 코드 리뷰 문서
+│   └── review_v1.md                # 로컬 리뷰 문서
 ├── csv/
 │   ├── preprocessed_reviews.csv
 │   └── reviews_embeddings_extract.csv
@@ -65,7 +67,8 @@
 │   ├── baseline_*.joblib
 │   ├── ablation_*.joblib
 │   ├── final_selected_model.joblib
-│   └── final_proposed_model.joblib
+│   ├── final_proposed_model.joblib
+│   └── rating_refinement_*.csv
 ├── reviews/                        # 원본 리뷰 엑셀 데이터
 ├── requirements.txt
 ├── 7_빅데이터프로그래밍_수행계획서_오남.pdf
@@ -77,13 +80,13 @@
 노트북은 아래 순서대로 실행합니다.
 
 ```text
-01data-process.ipynb
+01data_process.ipynb
 -> 02KcBERT_extract.ipynb
--> 03PCA_Feature Fusion.ipynb
+-> 03PCA_Feature_Fusion.ipynb
 -> 04SMOTE_5-fold_model_train.ipynb
--> 05_baseline_compare_metadata_effect.ipynb
--> 06_model_selection_error_analysis.ipynb
--> 07_rating_refinement_comparison.ipynb
+-> 05baseline_compare_metadata_effect.ipynb
+-> 06model_selection_error_analysis.ipynb
+-> 07rating_refinement_comparison.ipynb
 ```
 
 산출물 흐름은 다음과 같습니다.
@@ -99,13 +102,18 @@ reviews/*.xlsx
 -> outputs/ablation_metadata_best_model.joblib
 -> outputs/final_selected_model.joblib
 -> outputs/final_proposed_model.joblib
+-> outputs/rating_refinement_all_model_summary.csv
+-> outputs/rating_refinement_error_samples.csv
+-> outputs/rating_refinement_top_changed_stores.csv
 ```
 
-`03PCA_Feature Fusion.ipynb`는 PCA와 feature fusion 구조를 확인하지만 `final_hybrid_train.csv`, `final_hybrid_val.csv`, `final_hybrid_test.csv`를 저장하지 않습니다. 04번 이후 모델 학습과 07번 별점 정제는 `csv/reviews_embeddings_extract.csv`의 raw KcBERT feature에서 split을 재현하고, PCA/scaler/SMOTE를 pipeline 내부에서 fit합니다.
+`03PCA_Feature_Fusion.ipynb`는 PCA와 feature fusion 구조를 확인하지만 `final_hybrid_train.csv`, `final_hybrid_val.csv`, `final_hybrid_test.csv`를 저장하지 않습니다. 04번 이후 모델 학습과 07번 별점 정제는 `csv/reviews_embeddings_extract.csv`의 raw KcBERT feature에서 split을 재현하고, PCA/scaler/SMOTE를 pipeline 내부에서 fit합니다.
 
-06번은 validation F1 기준 선택 모델을 `outputs/final_selected_model.joblib`로 저장하고, 프로젝트 제안 모델인 hybrid MLP를 `outputs/final_proposed_model.joblib`로 별도 저장합니다. 07번은 두 bundle을 모두 로드해 별점 정제 후보 1/2 결과를 나란히 비교합니다.
+06번은 validation F1 기준 선택 모델을 `outputs/final_selected_model.joblib`로 저장하고, 프로젝트 제안 모델인 hybrid MLP를 `outputs/final_proposed_model.joblib`로 별도 저장합니다. 07번은 두 bundle만 로드해 후보 2 방식으로 별점을 정제합니다.
 
-`*.csv`, `*.joblib`, `outputs/*.json`, `outputs/pdf_text/`, `custom/`은 `.gitignore`에 포함되어 있어 기본적으로 Git에 추적되지 않습니다. 새 환경에서는 위 실행 순서대로 노트북을 실행해 산출물을 재생성해야 합니다.
+현재 생성된 전처리 데이터는 `8,841`개이며, 라벨 분포는 일반 리뷰 `5,691`개, 이벤트 리뷰 `3,150`개입니다.
+
+`*.csv`, `*.joblib`, `custom/`은 `.gitignore`에 포함되어 있어 기본적으로 Git에 추적되지 않습니다. `outputs/*.json`은 재실행 시 긴 CV 탐색을 건너뛸 수 있도록 추적 대상입니다. 새 환경에서는 위 실행 순서대로 노트북을 실행해 CSV/joblib 산출물을 재생성해야 합니다.
 
 ## 환경 설정
 
