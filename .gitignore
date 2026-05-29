@@ -12,6 +12,11 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
+# Editor settings
+.vscode/
+.idea/
+*.code-workspace
+
 # Local environments
 .venv/
 venv/
@@ -38,9 +43,9 @@ wandb/
 
 # Generated data artifacts
 *.csv
-outputs/*.json
-outputs/pdf_text/
+*.json
+!outputs/*.json
 
-# Logs and custom directory
+# Logs and local review directory
 *.log
-custom
+custom/

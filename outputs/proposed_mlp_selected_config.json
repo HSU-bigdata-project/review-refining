@@ -13,9 +13,16 @@
   "n_splits": 5,
   "cv_grid_size": 192,
   "selection_rule": "highest mean_f1, then mean_pr_auc on leakage-safe 5-fold CV",
-  "min_threshold_for_tuning": 0.5,
-  "best_threshold_from_validation": 0.5008712106499705,
   "excluded_features": [
     "rating"
-  ]
+  ],
+  "cv_mean_f1": 0.4637830470633725,
+  "cv_std_f1": 0.014785413531345541,
+  "cv_mean_pr_auc": 0.4169249540232377,
+  "cv_std_pr_auc": 0.018586725389793897,
+  "cv_mean_precision": 0.40809048660311076,
+  "cv_mean_recall": 0.5374149659863946,
+  "cv_mean_roc_auc": 0.5688197132580053,
+  "min_threshold_for_tuning": 0.5,
+  "best_threshold_from_validation": 0.5008712106499705
 }
