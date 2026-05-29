@@ -93,9 +93,10 @@ reviews/*.xlsx
 -> csv/preprocessed_reviews.csv
 -> csv/reviews_embeddings_extract.csv
 -> outputs/proposed_mlp_final_model.joblib
--> outputs/baseline_tfidf_random_forest_model.joblib
--> outputs/ablation_mlp_kcbert_pca_only_model.joblib
--> outputs/ablation_mlp_metadata_only_model.joblib
+-> outputs/baseline_1_tfidf_random_forest_model.joblib
+-> outputs/baseline_2_metadata_only_mlp_model.joblib
+-> outputs/baseline_3_kcbert_only_mlp_model.joblib
+-> outputs/ablation_metadata_best_model.joblib
 -> outputs/final_selected_model.joblib
 -> outputs/final_proposed_model.joblib
 ```
