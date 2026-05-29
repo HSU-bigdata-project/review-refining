@@ -44,6 +44,11 @@
    - 제안 모델과 validation 기준 선택 모델의 이벤트 리뷰 확률을 비교
    - 중간 발표에서 채택한 후보 2: 이벤트 확률 기반 가중 평균만 적용
    - 후보 1 제외 방식은 정보 손실 위험이 있어 최종 코드에서는 사용하지 않음
+
+8. End-to-End 데모
+   - 저장된 프로젝트 제안 모델을 실제 리뷰 입력에 적용
+   - 리뷰 입력에서 이벤트 확률, 이벤트 여부, 후보 2 별점 정제 가중치 출력
+   - 학습이 아니라 최종 모델 적용 과정을 확인하는 발표용 데모
 ```
 
 ## 프로젝트 구조
@@ -57,6 +62,7 @@
 ├── 05baseline_compare_metadata_effect.ipynb # baseline 및 ablation 비교
 ├── 06model_selection_error_analysis.ipynb   # validation 기준 모델 선택 및 오답 분석
 ├── 07rating_refinement_comparison.ipynb     # 후보 2 기반 별점 정제 비교
+├── 08end_to_end_demo.ipynb       # 저장된 제안 모델 기반 입력-예측-정제 데모
 ├── custom/
 │   └── review_v1.md                # 로컬 리뷰 문서
 ├── csv/
@@ -87,6 +93,7 @@
 -> 05baseline_compare_metadata_effect.ipynb
 -> 06model_selection_error_analysis.ipynb
 -> 07rating_refinement_comparison.ipynb
+-> 08end_to_end_demo.ipynb
 ```
 
 산출물 흐름은 다음과 같습니다.
@@ -110,6 +117,8 @@ reviews/*.xlsx
 `03PCA_Feature_Fusion.ipynb`는 PCA와 feature fusion 구조를 확인하지만 `final_hybrid_train.csv`, `final_hybrid_val.csv`, `final_hybrid_test.csv`를 저장하지 않습니다. 04번 이후 모델 학습과 07번 별점 정제는 `csv/reviews_embeddings_extract.csv`의 raw KcBERT feature에서 split을 재현하고, PCA/scaler/SMOTE를 pipeline 내부에서 fit합니다.
 
 06번은 validation F1 기준 선택 모델을 `outputs/final_selected_model.joblib`로 저장하고, 프로젝트 제안 모델인 hybrid MLP를 `outputs/final_proposed_model.joblib`로 별도 저장합니다. 07번은 두 bundle만 로드해 후보 2 방식으로 별점을 정제합니다.
+
+08번은 `outputs/final_proposed_model.joblib`만 사용해 실제 리뷰 입력부터 이벤트 확률과 후보 2 별점 정제 결과까지 확인하는 end-to-end 데모입니다. 모델을 새로 학습하지 않으며, 최종 발표에서 프로젝트 제안 구조의 적용 흐름을 보여주기 위한 선택 실행 단계입니다.
 
 현재 생성된 전처리 데이터는 `8,841`개이며, 라벨 분포는 일반 리뷰 `5,691`개, 이벤트 리뷰 `3,150`개입니다.
 
