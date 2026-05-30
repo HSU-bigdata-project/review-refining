@@ -49,3 +49,4 @@ wandb/
 # Logs and local review directory
 *.log
 custom/
+*.pdf
