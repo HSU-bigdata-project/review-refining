@@ -126,7 +126,7 @@ reviews/*.xlsx
 
 ## 환경 설정
 
-Python 3.10 이상 사용을 권장합니다. `02KcBERT_extract.ipynb`는 Hugging Face에서 KcBERT 모델을 내려받기 때문에 최초 실행 시 인터넷 연결이 필요합니다. 필요한 패키지는 `requirements.txt`에 정리되어 있습니다.
+Python 3.10 이상 사용을 권장합니다. `02KcBERT_extract.ipynb`과 `08end_to_end_demo.ipynb`는 Hugging Face에서 KcBERT 모델을 내려받기 때문에 최초 실행 시 인터넷 연결이 필요합니다. 필요한 패키지는 `requirements.txt`에 정리되어 있습니다.
 
 ### macOS: uv 사용
 
