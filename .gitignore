@@ -43,9 +43,12 @@ wandb/
 
 # Generated data artifacts
 *.csv
+# 08 end-to-end demo input
+!csv/end-to-end-test.csv
 *.json
 !outputs/*.json
 
 # Logs and local review directory
 *.log
 custom/
+*.pdf
